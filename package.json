@@ -1,0 +1,27 @@
+{
+  "name": "BDSMS",
+  "version": "0.0.1",
+  "description": "Brand Development Short Message System, to elevate your personal brand's visibility.",
+  "author": {
+    "name": "chootka",
+    "email": "com@chootka.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chootka/BDSMS.git"
+  },
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "body-parser": "^1.9.2",
+    "connect": "^3.3.3",
+    "cron": "^1.0.5",
+    "express": "^4.10.2",
+    "mongoose": "^3.8.19",
+    "twilio": "^1.8.0",
+    "urlencode": "^0.2.0"
+  },
+  "engines": {}
+}

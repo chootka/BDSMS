@@ -32,7 +32,7 @@
 
         <!-- end HTML -->
         <script>
-          var LEADERBOARD_SIZE = 15;
+          var LEADERBOARD_SIZE = 5;
 
           // Create our Firebase reference
           var db = new Firebase('https://dazzling-inferno-1361.firebaseio.com/');
@@ -45,13 +45,12 @@
             var row = $("<tr/>", {
               class: 'rank-'+snapshot.val().rank
             });
-            
             if ( snapshot.val().twitter ) {
               row.append( $("<td/>")
                           .append( $("<p/>")
                                       .text('Follow ' + snapshot.val().twitter + ' on Twitter') ) 
                                       .on('click', function() {
-                                        window.location = 'https://twitter.com/' + snapshot.val().twitter;
+                                        window.open('https://twitter.com/' + snapshot.val().twitter, "_blank");
                                       })
               );
             }
@@ -60,13 +59,14 @@
                             .append( $("<p/>")
                                         .text('Follow ' + snapshot.val().instagram + ' on Instagram') ) 
                                         .on('click', function() {
-                                          window.location = 'http://instagram.com/' + snapshot.val().instagram;
+                                          window.open('http://instagram.com/' + snapshot.val().instagram, "_blank");
                                         })
               );
             }
             // row.append($("<td/>").text(snapshot.val().rank));
 
             // Store a reference to the table row so we can get it again later.
+            console.log("name: " + snapshot.name());
             nodes[snapshot.name()] = row;
 
             // Insert the new rank in the appropriate place in the table.
@@ -81,6 +81,7 @@
 
           // Helper function to handle a rank object being removed; just removes the corresponding table row.
           function onRankRemoved(snapshot) {
+            console.log("snapshot name: " + snapshot.name());
             var row = nodes[snapshot.name()];
             row.remove();
             delete nodes[snapshot.name()];
@@ -92,6 +93,7 @@
           // Add a callback to handle when a new ranking is added.
           rankListSize.on('child_added', function (snapshot, prevName) {
             onRankAdded(snapshot, prevName);
+            console.log("prevName: " + prevName);
           });
 
           // Add a callback to handle when a ranking is removed
@@ -103,6 +105,7 @@
           var changedCallback = function (snapshot, prevName) {
             onRankRemoved(snapshot);
             onRankAdded(snapshot, prevName);
+            console.log("prevName: " + prevName);
           };
           rankListSize.on('child_moved', changedCallback);
           rankListSize.on('child_changed', changedCallback);

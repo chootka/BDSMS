@@ -119,6 +119,7 @@ th {
 
 td {
     cursor: pointer;
+    padding: 40px;
 }
 
 h1 {
@@ -163,13 +164,13 @@ font-family: 'Signika', sans-serif;
 .rank-2 {
     font-size: 30px;
     color: #bbb4b4;
-    font-family: 'Exo', sans-serif;
+    font-family: 'Signika', sans-serif;
 }
 
 .rank-3 {
     font-size: 40px;
     color: #aea9a9;
-    font-family: 'Anton', sans-serif;
+    font-family: 'Signika', sans-serif;
 }
 
 .rank-4 {
@@ -181,31 +182,31 @@ font-family: 'Signika', sans-serif;
 .rank-5 {
     font-size: 60px;
     color: #f3d4d4;
-    font-family: 'Poiret One', cursive;
+    font-family: 'Signika', sans-serif;
 }
 
 .rank-6 {
     font-size: 70px;
     color: #e5c9c9;
-    font-family: 'Oswald', sans-serif;
+    font-family: 'Signika', sans-serif;
 }
 
 .rank-7 {
     font-size: 80px;
     color: #d8bdbd;
-    font-family: 'Exo', sans-serif;
+    font-family: 'Signika', sans-serif;
 }
 
 .rank-8 {
     font-size: 90px;
     color: #c8b0b0;
-    font-family: 'Anton', sans-serif;
+    font-family: 'Signika', sans-serif;
 }
 
 .rank-9 {
     font-size: 100px;
     color: #baa5a5;
-    font-family: 'Signika', sans-serif;
+    font-family: 'Poiret One', cursive;
 }
 
 

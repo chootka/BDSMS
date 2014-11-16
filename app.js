@@ -85,6 +85,7 @@ app.post('/inbound', function (req, res) {
 		, body 		= req.body.Body.trim().toLowerCase()
 		;
 
+
  	switch (true) {
  		case /subscribe/.test(body):
 
@@ -94,6 +95,11 @@ app.post('/inbound', function (req, res) {
 	      		resp.message(mConfirm + ' ' + mHelp);
 	      		// definie user model + init vals
 	      		dbRef.child( fromNum ).set({"number": fromNum, "rank": 0});
+	      		// increment counter on total # of users
+		    	var upvotesRef = new Firebase(firebaseUrl + '/' + 'population');
+				upvotesRef.transaction(function (current_value) {
+				  return (current_value || 0) + 1;
+				});
 	    	}
 	    	break;
 
@@ -104,6 +110,11 @@ app.post('/inbound', function (req, res) {
 	    	} else {
 	    		resp.message(mLeave);
 		      	userRef.remove();
+	      		// decrement counter on total # of users
+		    	var upvotesRef = new Firebase(firebaseUrl + '/' + 'population');
+				upvotesRef.transaction(function (current_value) {
+				  return (current_value || 0) - 1;
+				});
 		     }
 	      	break;
 
@@ -164,13 +175,22 @@ app.post('/inbound', function (req, res) {
 				resp.message(mSubscribe);
 	    	} else {
 
+	    		// Get a reference to our posts
+				var popRef = new Firebase(firebaseUrl + '/population' );
+				var pop = 0;
+				// Attach an asynchronous callback to read the data at our posts reference
+				popRef.on("value", function(snapshot) {
+				  pop = snapshot.val();
+				}, function (errorObject) {
+				  console.log("The read failed: " + errorObject.code);
+				});
 				// return user's ranking
 				var ref = new Firebase( firebaseUrl + '/' + encodeURIComponent(fromNum) + '/rank' );
 				ref.transaction(function(currentRank) {
    					// If rank has never been set, currentRank will be null.
 
    					var newRank = currentRank+1; // dangerous - should check if currentRan is null or not
-					resp.message( "Your rank is now ranked " + newRank + " out of 100" );
+					resp.message( "Your rank is now ranked " + newRank + " out of " + pop);
   					return newRank;
 				}, function(error, committed, snapshot) {
 					if (error) {

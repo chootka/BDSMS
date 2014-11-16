@@ -4,16 +4,17 @@
 var twilio			= require('twilio')
  	, client		= twilio('AC3248e744302535fb1bf3d2347b02fc1d', '7b8af20a4682a407b93269983cc5954b')
  	, express 		= require("express")
+	// , exphbs 		= require('express-handlebars')
   // , logfmt          = require("logfmt")
   // , EventSource     = require('eventsource')
-  // , http            = require('http')
+	, http 			= require('http')
   // , fs              = require('fs')
   // , url             = require('url')
   // , cors            = require('cors')
  	, bodyParser 	= require('body-parser')
   // , json            = require('json')
  	, urlencode 	= require('urlencode')
- 	, cronJob 		= require('cron').CronJob
+ 	// , cronJob 		= require('cron').CronJob
  	, Firebase 		= require('firebase')
  	, firebaseUrl	= 'https://dazzling-inferno-1361.firebaseio.com/'
  	, dbRef 		= new Firebase( firebaseUrl )
@@ -29,6 +30,8 @@ var twilio			= require('twilio')
 	, mLeave		= 'You have been removed from the BDSMS system. Thanks for playing!'
 	, mAbout		= 'BDSMS stands for Brand Development Short Message System. Use BDSMS to promote your personal brand on the internet! The more you check your stats by typing "Rank" or "R" for short, the more visible your profile will be on BDSMS.net. Enjoy!'
 	, app 			= express()
+	// , routes 		= require('./routes')
+	// , config 		= require('./config')
 	;
 
 	// Text "Subscribe" receive updates.
@@ -39,23 +42,36 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
+// Set handlebars as the templating engine
+// app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
+// app.set('view engine', 'handlebars');
+// Disable etag headers on responses
+// app.disable('etag');
+// Index Route
+// app.get('/', routes.index);
+// Page Route
+// app.get('/page/:page/:skip', routes.page);
+// Set /public as our static content dir
+// app.use("/", express.static(__dirname + "/public/"));
+
 
 /////////////////////////////
 // firebase listeners
 /* modify numbers array for keeping track of who is subscribed */
 dbRef.on('child_added', function(snapshot) {
 	numbers.push( snapshot.val().number );
-	console.log( 'Added number ' + snapshot.val().number );
-	console.log("current numbers: " + numbers);
+	// console.log( 'Added number ' + snapshot.val().number );
+	// console.log("current numbers: " + numbers);
 });
 dbRef.on('child_removed', function(snapshot) {
 	var index = numbers.indexOf(  snapshot.val().number );
 	if (index > -1) {
 		numbers.splice(index, 1);
-		console.log( 'Removed number ' + snapshot.val().number );
-		console.log("current numbers: " + numbers);
+		// console.log( 'Removed number ' + snapshot.val().number );
+		// console.log("current numbers: " + numbers);
 	}
 });
+
 
 /////////////////////////////
 // application listeners 
@@ -203,13 +219,22 @@ var onUpdateComplete = function(error) {
   }
 };
 
+////////////////////////////////////////////////
+// FOR CRON SMS'
 /* for when BDSMS sends a response */
-for( var i = 0; i < numbers.length; i++ ) {
+// for( var i = 0; i < numbers.length; i++ ) {
 
-	client.sendMessage( { to:numbers[i], from:tNumber, body:mCron}, function( err, data ) {
-		console.log( data.body );
-	});
-}
+// 	client.sendMessage( { to:numbers[i], from:tNumber, body:mCron}, function( err, data ) {
+// 		console.log( data.body );
+// 	});
+// }
 
 /* assign BDSMS to run on port 3000 */
 app.listen(3000);
+// Fire it up (start our server)
+// var server = http.createServer(app).listen(port, function() {
+//   console.log('Express server listening on port ' + port);
+// });
+
+// Initialize socket.io
+// var io = require('socket.io').listen(server);

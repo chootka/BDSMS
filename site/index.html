@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        <link href='http://fonts.googleapis.com/css?family=Poiret+One|Anton|Exo|Oswald|Signika' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+        <script src="https://cdn.firebase.com/js/client/1.1.1/firebase.js"></script>
+
+    </head>
+    <body>
+
+        <div class="container">
+          <h1>B D S M S</h1>
+          <h3>Brand Development Short Message System</h3
+
+          <div class="container">
+            <table id="leaderboardTable">
+            </table>
+          </div>
+        </div>
+
+        <!-- end HTML -->
+        <script>
+          var LEADERBOARD_SIZE = 15;
+
+          // Create our Firebase reference
+          var db = new Firebase('https://dazzling-inferno-1361.firebaseio.com/');
+
+          // Keep a mapping of firebase locations to HTML elements, so we can move / remove elements as necessary.
+          var nodes = {};
+
+          // Helper function that takes a new rank snapshot and adds an appropriate row to our leaderboard table.
+          function onRankAdded(snapshot, prevName) {
+            var row = $("<tr/>", {
+              class: 'rank-'+snapshot.val().rank
+            });
+            
+            if ( snapshot.val().twitter ) {
+              row.append( $("<td/>")
+                          .append( $("<p/>")
+                                      .text('Follow ' + snapshot.val().twitter + ' on Twitter') ) 
+                                      .on('click', function() {
+                                        window.location = 'https://twitter.com/' + snapshot.val().twitter;
+                                      })
+              );
+            }
+            if ( snapshot.val().instagram ) {
+              row.append( $("<td/>")
+                            .append( $("<p/>")
+                                        .text('Follow ' + snapshot.val().instagram + ' on Instagram') ) 
+                                        .on('click', function() {
+                                          window.location = 'http://instagram.com/' + snapshot.val().instagram;
+                                        })
+              );
+            }
+            // row.append($("<td/>").text(snapshot.val().rank));
+
+            // Store a reference to the table row so we can get it again later.
+            nodes[snapshot.name()] = row;
+
+            // Insert the new rank in the appropriate place in the table.
+            if (prevName === null) {
+              $("#leaderboardTable").append(row);
+            }
+            else {
+              var lowerRow = nodes[prevName];
+              lowerRow.before(row);
+            }
+          }
+
+          // Helper function to handle a rank object being removed; just removes the corresponding table row.
+          function onRankRemoved(snapshot) {
+            var row = nodes[snapshot.name()];
+            row.remove();
+            delete nodes[snapshot.name()];
+          }
+
+          // Create a view to only receive callbacks for the last LEADERBOARD_SIZE ranks
+          var rankListSize = db.limit(LEADERBOARD_SIZE);
+
+          // Add a callback to handle when a new ranking is added.
+          rankListSize.on('child_added', function (snapshot, prevName) {
+            onRankAdded(snapshot, prevName);
+          });
+
+          // Add a callback to handle when a ranking is removed
+          rankListSize.on('child_removed', function (snapshot) {
+            onRankRemoved(snapshot);
+          });
+
+          // Add a callback to handle when a rank changes or moves positions.
+          var changedCallback = function (snapshot, prevName) {
+            onRankRemoved(snapshot);
+            onRankAdded(snapshot, prevName);
+          };
+          rankListSize.on('child_moved', changedCallback);
+          rankListSize.on('child_changed', changedCallback);
+        </script>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>
